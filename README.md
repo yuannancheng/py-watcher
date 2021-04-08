@@ -14,8 +14,3 @@
 2.  新建 Feat_xxx 分支
 3.  提交代码
 4.  新建 Pull Request
-
-#### 其他
-
-1.  使用 Readme.XXX.md 来支持不同的语言，例如 Readme.en.md, Readme.zh.md
-2.  
