@@ -1,0 +1,30 @@
+{
+  "result": "lastResult.json",
+  "mail": {
+    "host": "smtp.163.com",
+    "port": "465",
+    "from_addr": "xxx@163.com",
+    "tokens": "xxx",
+    "to_addr": [
+      "xxx@163.com",
+      "xxx@qq.com"
+    ]
+  },
+  "target": [{
+    "name": "专升本-九江学院校园网",
+    "link": "https://www.jju.edu.cn/zsjy2/zsb.htm",
+    "el": {
+      "list": ".con_bg>.con>.right>.list1>li",
+      "title": "a",
+      "time": "span"
+    }
+  }, {
+    "name": "江西省教育考试院网站",
+    "link": "http://www.jxeea.cn",
+    "el": {
+      "list": ".section2-right>ul>li",
+      "title": "a",
+      "time": "span"
+    }
+  }]
+}
