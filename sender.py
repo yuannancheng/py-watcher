@@ -3,14 +3,14 @@
 import smtplib
 from email.mime.text import MIMEText
 from email.header import Header
+from email.utils import parseaddr, formataddr
 
 
 def send_mail_html(host, port, nick, from_addr, tokens, to_addr, title, body):
     msg = MIMEText(body, _subtype='html', _charset='utf-8')
     msg['Subject'] = Header(title, 'utf-8')
-    h = Header(nick, 'utf-8')
-    h.append(from_addr, 'ascii')
-    msg['From'] = h
+    nick, from_addr = parseaddr('{} <{}>'.format(nick, from_addr))
+    msg['From'] = formataddr((Header(nick, 'utf-8').encode(), from_addr))
 
     try:
         smtp = smtplib.SMTP_SSL(host, port)

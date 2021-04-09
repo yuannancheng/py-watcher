@@ -73,7 +73,7 @@ def compare():
             'content_td': 'padding:3px;',
             'theEnd': 'border-top:#ddd solid 1px;padding:5px;'
         }
-        # style = '<style>'
+        style = '<style>'
 
         # 替换为内联样式，以适应邮件样式规则
         for i in styleSheet:
