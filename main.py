@@ -52,86 +52,23 @@ def compare():
             sum += 1
             msg += '<p><span>{}&nbsp;&nbsp;</span><span>{}</span></p>'.format(data['time'], data['title'])
         if sum > 0:
-            msg = '<p><strong>{}</strong>&nbsp;&nbsp;<a href="{}">点击访问</a></p><div class="Meet_you_mail_content">{}</div>'.format(name, setting['target'][i]['link'], msg)
+            msg = '<p><strong>{}</strong>&nbsp;&nbsp;<a href="{}">点击访问</a></p><div class="Meet_you_mail_content">{}</div>'.format(
+                name, setting['target'][i]['link'], msg)
             body += msg
-    if not body == '': # 有历史记录可对比才继续
+    if not body == '':  # 有历史记录可对比才继续
         body = '''<div class="Meet_you_mail_wrap">
-          <div class="Meet_you_mail_title_wrap">
-            <p class="Meet_you_mail_title">以下网站发布了新的公告</p>
-          </div>
-          <div style="margin:40px auto;width:90%">
-        ''' + body + '''
-            <br>
-            <p style="border-top: #eee solid 2px;padding: 5px;">
-              此邮箱无人值守，请勿回复此邮件。<!-- | 来自 <a href="https://github.com/yuannancheng/py-watcher" style="text-decoration:none;color:#12addb!important">PyWatcher</a> -->
-            </p>
-          </div>
-          <style>
-              body {
-                background-color: #fff!important;
-              }
-              * {
-                color: #000!important;
-                background-color: transparent!important;
-              }
-              a:active,
-              a:hover,
-              a:link,
-              a:visited {
-                text-decoration: none
-              }          
-              .Meet_you_mail_wrap div:nth-child(2) a {
-                color: #12addb!important;
-              }
-              .Meet_you_mail_wrap {
-                border-radius: 10px 10px 10px 10px;
-                font-size: 13px;
-                width: 666px;
-                font-family: 'Century Gothic', 'Trebuchet MS', 'Hiragino Sans GB', 微软雅黑, 'Microsoft Yahei', Tahoma, Helvetica, Arial, SimSun, sans-serif;
-                margin: 50px auto;
-                border: 1px solid #eee!important;
-                max-width: 100%;
-                background: #fff repeating-linear-gradient(-45deg, #fff, #fff 1.125rem, transparent 1.125rem, transparent 2.25rem)!important;
-                box-shadow: 0 1px 5px rgba(0, 0, 0, .15)
-              }
-              .Meet_you_mail_title_wrap {
-                width: 100%;
-                background: #49bdad!important;
-                border-radius: 10px 10px 0 0;
-                background-image: -moz-linear-gradient(0deg, #43c6b8, #ffd1f4)!important;
-                background-image: -webkit-linear-gradient(0deg, #43c6b8, #ffd1f4)!important;
-                height: auto
-              }
-              .Meet_you_mail_title {
-                font-size: 15px;
-                word-break: break-all;
-                padding: 23px 32px;
-                margin: 0;
-                background-color: hsla(0, 0%, 100%, .4);
-                border-radius: 10px 10px 0 0;
-                color: #fff!important;
-              }
-    
-              .Meet_you_mail_content {
-                position: relative;
-                margin: 20px 0;
-                padding: 5px 15px;
-                border-radius: 0 5px 5px 0;
-                font-size: 14px;
-                color: #555!important;
-                border-left: 5px #eee solid!important;
-                margin-left: 2em
-              }          
-              .Meet_you_mail_wrap div:nth-child(2) * {
-                color: #555!important;
-              }        
-              .Meet_you_mail_content > * {
-                margin-block-start: unset;
-                margin-block-end: unset;
-                margin: 5px auto;
-              }
-          </style>
-        </div>'''
+                  <div class="Meet_you_mail_title_wrap">
+                    <p class="Meet_you_mail_title">以下网站发布了新的公告</p>
+                  </div>
+                  <div style="margin:40px auto;width:90%">
+                ''' + body + '''
+                    <br>
+                    <p style="border-top: #eee solid 1px;padding: 5px;">
+                      此邮箱无人值守，请勿回复此邮件 | 来自 <a href="https://github.com/yuannancheng/py-watcher" style="text-decoration:none;color:#12addb!important">PyWatcher</a>
+                    </p>
+                  </div>
+                  <style> body { background-color: #fff !important; } * { color: #000 !important; background-color: transparent !important; } a:active, a:hover, a:link, a:visited { text-decoration: none } .Meet_you_mail_wrap div:nth-child(2) a { color: #12addb !important; } .Meet_you_mail_wrap { border-radius: 10px 10px 10px 10px; font-size: 13px; width: 666px; font-family: 'Century Gothic', 'Trebuchet MS', 'Hiragino Sans GB', 微软雅黑, 'Microsoft Yahei', Tahoma, Helvetica, Arial, SimSun, sans-serif; margin: 50px auto; border: 1px solid #eee !important; max-width: 100%; background: #fff repeating-linear-gradient(-45deg, #fff, #fff 1.125rem, transparent 1.125rem, transparent 2.25rem) !important; box-shadow: 0 1px 5px rgba(0, 0, 0, .15) } .Meet_you_mail_title_wrap { width: 100%; background: #49bdad !important; border-radius: 10px 10px 0 0; background-image: -moz-linear-gradient(0deg, #43c6b8, #ffd1f4) !important; background-image: -webkit-linear-gradient(0deg, #43c6b8, #ffd1f4) !important; height: auto } .Meet_you_mail_title { font-size: 15px; word-break: break-all; padding: 23px 32px; margin: 0; background-color: hsla(0, 0%, 100%, .4); border-radius: 10px 10px 0 0; color: #fff !important; } .Meet_you_mail_content { position: relative; margin: 20px 0; padding: 5px 15px; border-radius: 0 5px 5px 0; font-size: 14px; color: #555 !important; border-left: 5px #eee solid !important; margin-left: 2em } .Meet_you_mail_wrap div:nth-child(2) * { color: #555 !important; } .Meet_you_mail_content>* { margin-block-start: unset; margin-block-end: unset; margin: 5px auto; } </style>
+                </div>'''
 
         mail = setting['mail']
         success = sender.send_mail_html(
