@@ -3,6 +3,7 @@
   "mail": {
     "host": "smtp.163.com",
     "port": "465",
+    "nick": "nick_name",
     "from_addr": "xxx@163.com",
     "tokens": "xxx",
     "to_addr": [
