@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import re
+import time
 import json
 import sender
 import os.path
@@ -29,8 +30,13 @@ def requests():
     nResult = {}
     for i, v in enumerate(target):
         nResult[v['name']] = []
-        r = session.get(v['link'])
-        r.html.render()  # 渲染页面
+        try:
+            r = session.get(v['link'])
+        except:
+            print('请求失败，正在重试')
+            time.sleep(1)
+            r = session.get(v['link'])
+        r.html.render() # 渲染页面
         for li in r.html.find(v['el']['list']):
             nResult[v['name']].append({
                 'title': li.find(v['el']['title'])[0].text,
