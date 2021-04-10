@@ -38,10 +38,19 @@ def requests():
             r = session.get(v['link'])
         r.html.render() # 渲染页面
         for li in r.html.find(v['el']['list']):
+            title = li.find(v['el']['title'])
+            time = li.find(v['el']['time'])
+
+            if len(title) == 0 and len(time) == 0: # 当网页改版，两个都找不到时，使用旧的数据或者[]
+                print('无效的title与time对象选择器')
+                nResult[v['name']] = result[v['name']] if (v['name'] in result) else []
+                break
+
             nResult[v['name']].append({
-                'title': li.find(v['el']['title'])[0].text,
-                'time': li.find(v['el']['time'])[0].text
+                'title': title[0].text if len(title) > 0 else '',
+                'time': time[0].text if len(time) > 0 else ''
             })
+
     session.close()
 
 
