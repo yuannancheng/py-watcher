@@ -35,6 +35,7 @@ def requests():
                 'title': li.find(v['el']['title'])[0].text,
                 'time': li.find(v['el']['time'])[0].text
             })
+    session.close()
 
 
 def compare():
