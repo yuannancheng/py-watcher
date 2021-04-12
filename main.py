@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import re
-import time
+import sys
 import json
 import sender
 import os.path
@@ -23,7 +23,8 @@ def loadLastResult():
             result = json.loads(f.read())
 
 
-def requests():
+def requests(n=0):
+    import time
     global setting, result, nResult
     session = HTMLSession()
     target = setting['target']
@@ -32,10 +33,15 @@ def requests():
         nResult[v['name']] = []
         try:
             r = session.get(v['link'])
-        except:
-            print('请求失败，正在重试')
-            time.sleep(1)
-            r = session.get(v['link'])
+        except Exception as e:
+            print(e)
+            if n < 3:
+                print('请求失败，3秒后重新执行函数')
+                time.sleep(3)
+                return requests(n+1)
+            else:
+                print('多次重试失败，结束运行')
+                sys.exit()
         r.html.render() # 渲染页面
         for li in r.html.find(v['el']['list']):
             title = li.find(v['el']['title'])
