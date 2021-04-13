@@ -4,13 +4,15 @@ import re
 import sys
 import time
 import json
+import atexit
 import sender
 import os.path
 from requests_html import HTMLSession
 
 
 def loadSetting(settingPath):
-    global setting
+    global setting, logMsg
+    logMsg = []
     with open(settingPath, encoding='utf-8') as f:
         setting = json.loads(f.read())
 
@@ -28,13 +30,13 @@ def session_get(session, link, max=3, n=0):
     try:
         return session.get(link)
     except Exception as e:
-        print(e)
+        log(e)
         if n < max:
-            print('请求失败，{}秒后重试'.format(n * 2 + 1))
+            log('请求失败，{}秒后重试'.format(n * 2 + 1))
             time.sleep(n * 2 + 1)
             return session_get(session, link, max=max, n=n+1)
         else:
-            print('重试{}次仍然失败，结束程序'.format(max))
+            log('重试{}次仍然失败，结束程序'.format(max))
             sys.exit()
 
 
@@ -44,7 +46,7 @@ def requests():
     target = setting['target']
     nResult = {}
     for i, v in enumerate(target):
-        print('正在请求 {}({})'.format(v['name'], v['link']))
+        log('正在请求 {}({})'.format(v['name'], v['link']))
         nResult[v['name']] = []
         r = session_get(session, v['link']) # 自带重新请求的函数
         r.html.render() # 渲染页面
@@ -53,7 +55,7 @@ def requests():
             time = li.find(v['el']['time'])
 
             if len(title) == 0 and len(time) == 0: # 当网页改版，两个都找不到时，使用旧的数据或者[]
-                print('无效的title与time对象选择器')
+                log('无效的title与time对象选择器')
                 nResult[v['name']] = result[v['name']] if (v['name'] in result) else []
                 break
 
@@ -101,7 +103,7 @@ def compare():
             'content_td': 'padding:3px;',
             'theEnd': 'border-top:#ddd solid 1px;padding:5px;'
         }
-        style = '<style>'
+        # style = '<style>'
 
         # 替换为内联样式，以适应邮件样式规则
         for i in styleSheet:
@@ -127,15 +129,32 @@ def compare():
         )
 
         if success:
-            print('发送成功')
+            log('发送成功')
         else:
-            print('发送失败')
+            log('发送失败')
+    else:
+        log('未发现更新')
 
 
 def saveResult():
     global setting, nResult
     with open(setting['result'], 'w', encoding='utf-8') as f:
         json.dump(nResult, f, ensure_ascii=False)
+
+
+def log(msg):
+    global logMsg
+    log = '{} {}'.format(time.strftime("%Y/%m/%d %H:%M:%S"), msg)
+    print(log)
+    logMsg.append(log)
+
+
+# 退出前执行
+@atexit.register
+def logToLocal():
+    global logMsg
+    with open(setting['log'], 'w', encoding='utf-8') as f:
+        f.write('\n'.join(logMsg))
 
 
 def main():
