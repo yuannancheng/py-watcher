@@ -30,18 +30,25 @@ def requests(n=0):
     target = setting['target']
     nResult = {}
     for i, v in enumerate(target):
+        print('正在请求 {}({})'.format(v['name'], v['link']))
         nResult[v['name']] = []
         try:
             r = session.get(v['link'])
         except Exception as e:
             print(e)
-            if n < 3:
-                print('请求失败，3秒后重新执行函数')
-                time.sleep(3)
-                return requests(n+1)
-            else:
-                print('多次重试失败，结束运行')
-                sys.exit()
+            print('请求失败，1秒后重新请求')
+            time.sleep(1)
+            try:
+                r = session.get(v['link'])
+            except Exception as e: # 同一网站连续请求两次失败后重新执行函数（重新请求全部网站）
+                print(e)
+                if n < 3:
+                    print('请求失败，3秒后重新执行函数')
+                    time.sleep(3)
+                    return requests(n+1)
+                else:
+                    print('多次重试失败，结束运行')
+                    sys.exit()
         r.html.render() # 渲染页面
         for li in r.html.find(v['el']['list']):
             title = li.find(v['el']['title'])
