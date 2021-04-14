@@ -40,6 +40,20 @@ def session_get(session, link, max=3, n=0):
             sys.exit()
 
 
+def r_html_render(r, max=3, n=0):
+    try:
+        return r.html.render()
+    except Exception as e:
+        log(e)
+        if n < max:
+            log('渲染失败，{}秒后重试'.format(n * 2 + 1))
+            time.sleep(n * 2 + 1)
+            return r_html_render(r, max=max, n=n+1)
+        else:
+            log('重试渲染{}次仍然失败，结束程序'.format(max))
+            sys.exit()
+
+
 def requests():
     global setting, result, nResult
     session = HTMLSession()
@@ -49,7 +63,7 @@ def requests():
         log('正在请求 {}({})'.format(v['name'], v['link']))
         nResult[v['name']] = []
         r = session_get(session, v['link']) # 自带重新请求的函数
-        r.html.render() # 渲染页面
+        r_html_render(r) # 自带重新渲染页面的函数
         for li in r.html.find(v['el']['list']):
             title = li.find(v['el']['title'])
             time = li.find(v['el']['time'])
@@ -63,6 +77,7 @@ def requests():
                 'title': title[0].text if len(title) > 0 else '',
                 'time': time[0].text if len(time) > 0 else ''
             })
+        log('请求成功')
 
     session.close()
 
@@ -166,4 +181,7 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    try:
+        main()
+    except BaseException as e:
+        log(e)
