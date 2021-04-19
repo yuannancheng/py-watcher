@@ -26,15 +26,15 @@ def loadLastResult():
             result = json.loads(f.read())
 
 
-def session_get(session, link, max=3, n=0):
+def session_get(session, link, headers, max=3, n=0):
     try:
-        return session.get(link)
+        return session.get(link, headers=headers)
     except Exception as e:
         log(e)
         if n < max:
             log('请求失败，{}秒后重试'.format(n * 2 + 1))
             time.sleep(n * 2 + 1)
-            return session_get(session, link, max=max, n=n+1)
+            return session_get(session, link, headers=headers, max=max, n=n+1)
         else:
             log('重试{}次仍然失败，结束程序'.format(max))
             sys.exit()
@@ -62,20 +62,46 @@ def requests():
     for i, v in enumerate(target):
         log('正在请求 {}({})'.format(v['name'], v['link']))
         nResult[v['name']] = []
-        r = session_get(session, v['link']) # 自带重新请求的函数
+
+        referer = v['link']
+        user_agent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.72 Safari/537.36'
+        headers = {
+            'Referer': referer,
+            'User-Agent': user_agent
+        }
+
+        r = session_get(session, v['link'], headers) # 自带重新请求的函数
         r_html_render(r) # 自带重新渲染页面的函数
         for li in r.html.find(v['el']['list']):
-            title = li.find(v['el']['title'])
-            time = li.find(v['el']['time'])
+            titleSelecter = v['el']['title']
+            timeSelecter = v['el']['time']
 
-            if len(title) == 0 and len(time) == 0: # 当网页改版，两个都找不到时，使用旧的数据或者[]
-                log('无效的title与time对象选择器')
-                nResult[v['name']] = result[v['name']] if (v['name'] in result) else []
-                break
+            if titleSelecter == '':
+                log('title元素选择器不能为空')
+                sys.exit()
+            else:
+                title = li.find(titleSelecter)
+                if len(title) == 0:
+                    log('无效的title元素选择器')
+                    nResult[v['name']] = result[v['name']] if (v['name'] in result) else []
+                    break
+                else:
+                    title = title[0].text
+
+            if timeSelecter == '':
+                time = ''
+            else:
+                time = li.find(timeSelecter)
+                if len(time) == 0:
+                    log('无效的time元素选择器')
+                    nResult[v['name']] = result[v['name']] if (v['name'] in result) else []
+                    break
+                else:
+                    time = time[0].text
 
             nResult[v['name']].append({
-                'title': title[0].text if len(title) > 0 else '',
-                'time': time[0].text if len(time) > 0 else ''
+                'title': title,
+                'time': time
             })
         log('请求成功')
 
@@ -104,6 +130,7 @@ def compare():
         if sum > 0:
             msg = '<tr><td class="title"><strong>{}</strong>&nbsp;&nbsp;<a href="{}" class="a">点击访问</a></td></tr><tr><td class="content_wrap"><table class="content" border="0" cellspacing="" cellpadding=""><tbody>{}</tbody></table></td></tr>'.format(name, setting['target'][i]['link'], msg)
             body += msg
+            log('{}有{}条更新'.format(name, sum))
     if not body == '': # 有历史记录可对比才继续
         body = '<!DOCTYPE html><html><head><meta charset="utf-8"/></head><div class="box"><table border="0" cellspacing="" cellpadding="" class="wrap"><tbody><tr><td class="header">以下网站发布了新的公告</td></tr><tr><td class="space"></td></tr>{}<tr><td class="space"></td></tr><tr><td class="theEnd">此邮箱无人值守，请勿回复此邮件 | 来自 <a href="https://github.com/yuannancheng/py-watcher" class="a">PyWatcher</a></td></tr></tbody></table></div></html>'.format(body)
 
@@ -181,7 +208,4 @@ def main():
 
 
 if __name__ == '__main__':
-    try:
-        main()
-    except BaseException as e:
-        log(e)
+    main()
